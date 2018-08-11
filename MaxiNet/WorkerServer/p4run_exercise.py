@@ -607,7 +607,7 @@ class ExerciseRunner:
                     print "Host %s Startup monitor pid %d. Tracer-id: %d" %(h.name, pid, host_id)
             else :
                 logfile = "/tmp/h{}.log".format(h.name)
-                monitor_command = "python " + script_dir + "/new_cmd_monitor.py --cmd_file=/tmp/h" + str(host_id) + "_cmnds.txt"
+                monitor_command = "python " + script_dir + "/new_cmd_monitor.py --cmd_file=/tmp/h" + str(h.name[1:]) + "_cmnds.txt"
                 with tempfile.NamedTemporaryFile() as f:
                     h.cmd(monitor_command + ' >' + logfile + ' 2>&1 & echo $! >> ' + f.name)
                     pid = int(f.read())
@@ -668,6 +668,10 @@ class ExerciseRunner:
             stopExp()
             sleep(2)
             print "Tk Experiment Stopped ..."
+
+    def fire_link_intf_timers(self) :
+        if self.operating_mode == "INS_VT" :
+            fire_timers()
 
 
     def do_net_cli(self):

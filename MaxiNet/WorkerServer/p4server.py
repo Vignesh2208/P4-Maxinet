@@ -615,6 +615,10 @@ class MininetManager(object):
     def stop_tk_experiment(self) :
         self.exercise.stop_tk_experiment()
 
+    @Pyro4.expose
+    def fireLinkIntfTimers(self) :
+        self.exercise.fire_link_intf_timers()
+
 
     @Pyro4.expose
     def destroy_mininet(self):

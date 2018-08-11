@@ -515,6 +515,9 @@ class Worker(object):
     def progress_by_n_rounds(self,n) :
         self.mininet.progress_by_n_rounds(n)
 
+    def fireLinkIntfTimers(self) :
+        self.mininet.fireLinkIntfTimers()
+
     def stop_tk_experiment(self) :
         self.mininet.stop_tk_experiment()
 
@@ -1555,6 +1558,10 @@ class Experiment(object):
     def advanceByNRounds(self, n) :
         for worker in self.worker_objs:
             worker.progress_by_n_rounds(n)
+
+    def fireLinkTimers(self) :
+        for worker in self.worker_objs:
+            worker.fireLinkIntfTimers()
 
     def stopTkInstances(self) :
         for worker in self.worker_objs:

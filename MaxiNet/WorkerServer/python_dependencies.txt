@@ -1,2 +1,0 @@
-pip install watchdog
-pip install psutil

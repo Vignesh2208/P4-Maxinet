@@ -41,12 +41,14 @@ import pdb
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
 
-def install_cmnds_to_run_on_hosts(data) :
+def install_cmnds_to_run_on_hosts(my_workers, data) :
     for host, my_cmd in data["host_cmnds"] :
         print "Setting Command on Host ...", host, " Cmd: ", my_cmd
-        with open("/tmp/" + str(host) + "_cmnds.txt", "w") as f :
+        with open("/tmp/tmp_" + str(host) + "_cmnds.txt", "w") as f :
             f.write(my_cmd + "\n")
-        raw_input("[Continue...]")
+        for worker in my_workers :
+            worker.put_file("/tmp/tmp_" + str(host) + "_cmnds.txt", "/tmp/" + str(host) + "_cmnds.txt") 
+    raw_input("[Continue...]")
 
 # Include Project Directory in PYTHONPATH
 # This is done to pickup changes done by us in MaxiNet Frontend
@@ -84,11 +86,11 @@ parser.add_argument('--num_workers', dest="num_workers", default=1, help = "Numb
 
 parser.add_argument('--operating_mode', dest="operating_mode", default="NORMAL", help = "Operating Mode: NORMAL/INS_VT ")
 
-parser.add_argument('--rel_cpu_speed', dest="rel_cpu_speed", default=1, help = "Rel cpu speed for INS_VT ")
+parser.add_argument('--rel_cpu_speed', dest="rel_cpu_speed", default=3, help = "Rel cpu speed for INS_VT ")
 
 parser.add_argument('--n_round_insns', dest="n_round_insns", default=1000000, help = "N instructions per round for INS_VT ")
 
-parser.add_argument('--progress_n_rounds', dest="progress_n_rounds", default=1000, help = "Number of Rounds to Run for INS_VT ")
+parser.add_argument('--progress_n_rounds', dest="progress_n_rounds", default=3000, help = "Number of Rounds to Run for INS_VT ")
 
 args = parser.parse_args()
 
@@ -251,10 +253,16 @@ if tk_args["operating_mode"] == "INS_VT" :
     for sw in my_swlist :
         exp.program_myswitch(sw)
     exp.advanceByNRounds(1000)
-    install_cmnds_to_run_on_hosts(data)
+    print "Loading Cmds to Run on Hosts ..."
+    install_cmnds_to_run_on_hosts(my_workers, data)
 
     print "Advancing Tk Instances By %d " %(tk_args["progress_n_rounds"])
-    exp.advanceByNRounds(tk_args["progress_n_rounds"])
+    #exp.advanceByNRounds(tk_args["progress_n_rounds"])
+    n_rounds_run = 0
+    while (n_rounds_run < tk_args["progress_n_rounds"]) :
+        exp.advanceByNRounds(1)
+        exp.fireLinkTimers()
+        n_rounds_run += 1
 
     raw_input("[Continue...]")
 
@@ -267,7 +275,10 @@ else :
     raw_input("[Continue...]")
     for sw in my_swlist :
         exp.program_myswitch(sw)
-    exp.CLI(locals(),globals())
+    print "Finished Programming P4 Switches as per topology ..."
+    raw_input("[Continue...]")
+    print "Loading Cmds to Run on Hosts ..."
+    install_cmnds_to_run_on_hosts(my_workers, data)
     print "Running for 30 secs ..."
     time.sleep(5)
     raw_input("[Continue...]")
@@ -275,4 +286,6 @@ else :
 print "Tearing Down Worker Mininet Instances ..."
 exp.stop()
 raw_input("[Continue]")  # wait for user to acknowledge network connectivity
+os.system("rm *.txt")
+os.system("rm *.cfg")
 
