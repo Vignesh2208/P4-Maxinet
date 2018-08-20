@@ -39,6 +39,10 @@ import pdb
 #TK imports
 import timekeeper_functions
 from timekeeper_functions import *
+
+import old_tk_functions
+from old_tk_functions import *
+
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -316,6 +320,16 @@ class ExerciseRunner:
         else :
             self.n_round_insns = 1000000
 
+        if "tdf" in tk_args:
+            self.tdf = tk_args["tdf"]
+        else :
+            self.tdf = 1.0
+
+        if "TIMESLICE" in tk_args:
+            self.TIMESLICE = tk_args["TIMESLICE"] 
+        else :
+            self.TIMESLICE = 100000
+
         self.tk_args = tk_args
 
         self.sswitch_cli_pids = []
@@ -337,6 +351,8 @@ class ExerciseRunner:
             if ret < 0 :
                 print "TimeKeeper Initialization Failed. Exiting ..."
                 sys.exit(-1)
+        elif self.operating_mode == "VT" :
+            pass
 
         self.create_network()
         # print "Starting Network .."
@@ -611,18 +627,18 @@ class ExerciseRunner:
                 with tempfile.NamedTemporaryFile() as f:
                     h.cmd(monitor_command + ' >' + logfile + ' 2>&1 & echo $! >> ' + f.name)
                     pid = int(f.read())
+                    self.host_pids[pid] = h
                     print "Host %s Startup monitor pid %d" %(h.name, pid)
                 
 
     def synchronize_and_freeze(self) :
 
+        for sw_name, sw_dict in self.switches.iteritems():
+            sw_obj = self.net.get(sw_name)
+            if sw_obj.switch_pid not in self.switch_pids :
+                self.switch_pids[sw_obj.switch_pid] = sw_obj
+
         if self.operating_mode == "INS_VT" :
-            for sw_name, sw_dict in self.switches.iteritems():
-                sw_obj = self.net.get(sw_name)
-                if sw_obj.switch_pid not in self.switch_pids :
-                    self.switch_pids[sw_obj.switch_pid] = sw_obj
-
-
             print "Synchronize and Freezing"
             sleep(2)
 
@@ -632,7 +648,24 @@ class ExerciseRunner:
             
 
             print "Synchronize and Freeze succeeded !"
-            sleep(1)      
+            sleep(1)    
+        elif self.operating_mode == "VT" :
+            print "RUNNING in ", self.operating_mode, " MODE .."
+            print "Dilating Nodes and Switches. TDF = ", self.tdf
+            for host_pid in self.host_pids :
+                o_dilate_all(host_pid, self.tdf)
+                o_addToExp(host_pid)
+
+            for sw_pid in self.switch_pids :
+                o_dilate_all(sw_pid, self.tdf)
+                o_addToExp(sw_pid)
+
+            print "Setting experiment timeslice ...", self.TIMESLICE
+            o_set_cbe_experiment_timeslice(self.TIMESLICE*self.tdf)
+            print "Sychronize and Freeze"
+            o_synchronizeAndFreeze()
+            sleep(2)
+
 
     def set_netdevice_owners(self) :
         if self.operating_mode == "INS_VT" :
@@ -655,12 +688,36 @@ class ExerciseRunner:
                         set_netdevice_owner(sw_pid,name)
 
             sleep(1)
+        elif self.operating_mode == "VT" :
+            print "Setting Net dev owners for hosts:"
+            for host_pid in self.host_pids :
+                host_obj = self.host_pids[host_pid]
+                for name in host_obj.intfNames():
+                    if name != "lo" :
+                        print "Host: ", host_pid, " Interface: ", name
+                        o_set_netdevice_owner(host_pid,name)
+
+            sleep(1)
+
+            print "Setting Net dev owners for switches: "
+            for sw_pid in self.switch_pids :
+                sw_obj = self.switch_pids[sw_pid]
+                for name in sw_obj.intfNames():
+                    if name != "lo" :
+                        print "Switch: ", sw_pid, " Interface: ", name
+                        o_set_netdevice_owner(sw_pid,name)
+
+            sleep(1)
+
 
     def progress_by_n_rounds(self, n) :
         if n > 0 and self.operating_mode == "INS_VT" :
             progress_n_rounds(n)
-            self.n_rounds_progressed = self.n_rounds_progressed + n
-            print "Total number of rounds progressed: %d " %(self.n_rounds_progressed)
+        elif n > 0 and self.operating_mode == "VT" :
+            o_progress_exp_cbe(n)
+
+        self.n_rounds_progressed = self.n_rounds_progressed + n
+        print "Total number of rounds progressed: %d " %(self.n_rounds_progressed)
 
     def stop_tk_experiment(self) :
         if self.operating_mode == "INS_VT" :
@@ -668,6 +725,12 @@ class ExerciseRunner:
             stopExp()
             sleep(2)
             print "Tk Experiment Stopped ..."
+        elif self.operating_mode == "VT" :
+            print "Stopping Experiment"
+            o_resume_exp_cbe()
+            sleep(2)
+            o_stopExp()
+            sleep(10)
 
     def fire_link_intf_timers(self) :
         if self.operating_mode == "INS_VT" :

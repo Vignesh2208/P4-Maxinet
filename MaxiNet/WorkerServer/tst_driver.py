@@ -74,8 +74,6 @@ parser.add_argument('--pcap_dir', dest="pcap_dir", default="/tmp", help = "Direc
 
 parser.add_argument('--switch_json', dest="switch_json", default="/tmp/routernew.json", help = "P4 Switch Parser JSON")
 
-# parser.add_argument('--switch_json', dest="switch_json", default="/home/rbabu/MaxiNet/MaxiNet/WorkerServer/simple_router.json", help = "P4 Switch Parser JSON")
-
 parser.add_argument('--switch_exe', dest="switch_exe",default="/home/vignesh/behavioral-model/targets/simple_router/.libs/lt-simple_router",  help="P4 Switch Executable")
 
 parser.add_argument('--mininet_cli', dest="cli_opt", default="False", help = "Invoke at Mininet CLI in the Workers")
@@ -84,13 +82,17 @@ parser.add_argument('--switch_init', dest="swinit_opt", default="ByApp", help = 
 
 parser.add_argument('--num_workers', dest="num_workers", default=1, help = "Number of Workers for the Experiment : (Default 1) ")
 
-parser.add_argument('--operating_mode', dest="operating_mode", default="NORMAL", help = "Operating Mode: NORMAL/INS_VT ")
+parser.add_argument('--operating_mode', dest="operating_mode", default="NORMAL", help = "Operating Mode: NORMAL/INS_VT/VT ")
 
 parser.add_argument('--rel_cpu_speed', dest="rel_cpu_speed", default=3, help = "Rel cpu speed for INS_VT ")
 
 parser.add_argument('--n_round_insns', dest="n_round_insns", default=1000000, help = "N instructions per round for INS_VT ")
 
 parser.add_argument('--progress_n_rounds', dest="progress_n_rounds", default=3000, help = "Number of Rounds to Run for INS_VT ")
+
+parser.add_argument('--tdf', dest="tdf", default=1.0, help = "TDF for VT mode")
+
+parser.add_argument('--TIMESLICE', dest="TIMESLICE", default=100000, help = "TIMESLICE for VT mode")
 
 args = parser.parse_args()
 
@@ -131,6 +133,8 @@ tk_args = {
     "rel_cpu_speed"  : float(args.rel_cpu_speed),
     "n_round_insns"  : int(args.n_round_insns),
     "progress_n_rounds" : int(args.progress_n_rounds),
+    "tdf" : float(args.tdf),
+    "TIMESLICE" : int(args.TIMESLICE),
 }
 
 # Now save the Input CLI arguments in experiment.cfg file
@@ -158,7 +162,7 @@ f.close()
 # Rename the file t1_experiment.cfg -> experiment.cfg
 os.rename("t1_experiment.cfg", "experiment.cfg")
 
-# Now also copy the given input topo file as in_top.json in each of worker
+# Now also copy the given input topo file as in_topo.json in each of worker
 copy2(topo_fname,'in_topo.json')
 print "File sucessfully copied as in_topo.json..."
 
@@ -242,7 +246,7 @@ exp.setup()
 #    exp.program_myswitch(sw)
 
 
-if tk_args["operating_mode"] == "INS_VT" :
+if tk_args["operating_mode"] == "INS_VT" or tk_args["operating_mode"] == "VT" :
     print "Initializing Tk Instances ..."
     exp.initializeTkInstances()
     raw_input("[Continue...]")
@@ -262,6 +266,8 @@ if tk_args["operating_mode"] == "INS_VT" :
     while (n_rounds_run < tk_args["progress_n_rounds"]) :
         exp.advanceByNRounds(1)
         exp.fireLinkTimers()
+        if n_rounds_run % 100 == 0:
+            print "Advanced by: ", n_rounds_run
         n_rounds_run += 1
 
     raw_input("[Continue...]")
@@ -270,6 +276,10 @@ if tk_args["operating_mode"] == "INS_VT" :
     #On each worker call StopExperiment
     exp.stopTkInstances()
     raw_input("[Continue...]")
+    if tk_args["operating_mode"] == "VT" :
+        os.system("sudo killall client_n")
+        os.system("sudo killall server_n")
+
 else :
     print "Start Program Switch objects as per topology ..."
     raw_input("[Continue...]")

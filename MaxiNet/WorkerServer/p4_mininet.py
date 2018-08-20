@@ -45,6 +45,7 @@ class P4Host(Host):
         self.cmd("sysctl -w net.ipv6.conf.all.disable_ipv6=1")
         self.cmd("sysctl -w net.ipv6.conf.default.disable_ipv6=1")
         self.cmd("sysctl -w net.ipv6.conf.lo.disable_ipv6=1")
+        self.cmd("sudo tcpdump -i eth0 -w /tmp/" + self.name + ".pcap &")
         return r
 
     def describe(self):
@@ -171,7 +172,7 @@ class P4Switch(Switch):
         logfile = "/tmp/p4s.{}.log".format(self.name)
         info(' '.join(args) + "\n")
 
-        if self.operating_mode == "NORMAL" :
+        if self.operating_mode == "NORMAL" or self.operating_mode == "VT" :
             pid = None
             with tempfile.NamedTemporaryFile() as f:
                 # self.cmd(' '.join(args) + ' > /dev/null 2>&1 &')
