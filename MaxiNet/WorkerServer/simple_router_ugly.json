@@ -173,7 +173,7 @@
                 },
                 {
                   "type" : "hexstr",
-                  "value" : "0x03e8"
+                  "value" : "0x0010"
                 }
               ],
               "op" : "set"
@@ -198,7 +198,7 @@
       "id" : 0,
       "source_info" : {
         "filename" : "simple_router.p4",
-        "line" : 207,
+        "line" : 275,
         "column" : 8,
         "source_fragment" : "MyDeparser"
       },
@@ -214,7 +214,7 @@
       "id" : 0,
       "source_info" : {
         "filename" : "simple_router.p4",
-        "line" : 185,
+        "line" : 253,
         "column" : 1,
         "source_fragment" : "update_checksum( ..."
       },
@@ -279,7 +279,7 @@
           "parameters" : [],
           "source_info" : {
             "filename" : "simple_router.p4",
-            "line" : 106,
+            "line" : 174,
             "column" : 8,
             "source_fragment" : "mark_to_drop()"
           }
@@ -296,7 +296,7 @@
           "parameters" : [],
           "source_info" : {
             "filename" : "simple_router.p4",
-            "line" : 106,
+            "line" : 174,
             "column" : 8,
             "source_fragment" : "mark_to_drop()"
           }
@@ -313,7 +313,7 @@
           "parameters" : [],
           "source_info" : {
             "filename" : "simple_router.p4",
-            "line" : 106,
+            "line" : 174,
             "column" : 8,
             "source_fragment" : "mark_to_drop()"
           }
@@ -348,7 +348,7 @@
           ],
           "source_info" : {
             "filename" : "simple_router.p4",
-            "line" : 110,
+            "line" : 178,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = port"
           }
@@ -367,7 +367,7 @@
           ],
           "source_info" : {
             "filename" : "simple_router.p4",
-            "line" : 111,
+            "line" : 179,
             "column" : 8,
             "source_fragment" : "meta.nhop_ipv4 = nhop_ipv4"
           }
@@ -409,7 +409,7 @@
           ],
           "source_info" : {
             "filename" : "simple_router.p4",
-            "line" : 112,
+            "line" : 180,
             "column" : 8,
             "source_fragment" : "hdr.ipv4.ttl = hdr.ipv4.ttl - 1"
           }
@@ -440,7 +440,7 @@
           ],
           "source_info" : {
             "filename" : "simple_router.p4",
-            "line" : 116,
+            "line" : 184,
             "column" : 8,
             "source_fragment" : "hdr.ethernet.dstAddr = dstAddr"
           }
@@ -471,7 +471,7 @@
           ],
           "source_info" : {
             "filename" : "simple_router.p4",
-            "line" : 120,
+            "line" : 188,
             "column" : 8,
             "source_fragment" : "hdr.ethernet.srcAddr = srcAddr"
           }
@@ -485,7 +485,7 @@
       "id" : 0,
       "source_info" : {
         "filename" : "simple_router.p4",
-        "line" : 102,
+        "line" : 170,
         "column" : 8,
         "source_fragment" : "MyIngress"
       },
@@ -496,7 +496,7 @@
           "id" : 0,
           "source_info" : {
             "filename" : "simple_router.p4",
-            "line" : 123,
+            "line" : 191,
             "column" : 10,
             "source_fragment" : "ipv4_lpm"
           },
@@ -533,7 +533,7 @@
           "id" : 1,
           "source_info" : {
             "filename" : "simple_router.p4",
-            "line" : 135,
+            "line" : 203,
             "column" : 10,
             "source_fragment" : "forward"
           },
@@ -570,7 +570,7 @@
           "id" : 2,
           "source_info" : {
             "filename" : "simple_router.p4",
-            "line" : 147,
+            "line" : 215,
             "column" : 10,
             "source_fragment" : "send_frame"
           },
@@ -610,7 +610,7 @@
           "id" : 0,
           "source_info" : {
             "filename" : "simple_router.p4",
-            "line" : 161,
+            "line" : 229,
             "column" : 12,
             "source_fragment" : "hdr.ipv4.isValid()"
           },
@@ -635,7 +635,7 @@
       "id" : 1,
       "source_info" : {
         "filename" : "simple_router.p4",
-        "line" : 173,
+        "line" : 241,
         "column" : 8,
         "source_fragment" : "MyEgress"
       },

@@ -45,7 +45,6 @@ class P4Host(Host):
         self.cmd("sysctl -w net.ipv6.conf.all.disable_ipv6=1")
         self.cmd("sysctl -w net.ipv6.conf.default.disable_ipv6=1")
         self.cmd("sysctl -w net.ipv6.conf.lo.disable_ipv6=1")
-        self.cmd("sudo tcpdump -i eth0 -w /tmp/" + self.name + ".pcap &")
         return r
 
     def describe(self):
@@ -162,7 +161,7 @@ class P4Switch(Switch):
         
         if self.enable_debugger:
             args.append("--debugger")
-        if self.log_console:
+        if self.operating_mode == "NORMAL" and self.log_console:
             #args.append("--log-console")
             sw_log_file = "/tmp/{}.log".format(self.name)
             args.append("--log-file " + sw_log_file)

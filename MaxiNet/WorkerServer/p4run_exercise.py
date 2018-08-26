@@ -330,6 +330,11 @@ class ExerciseRunner:
         else :
             self.TIMESLICE = 100000
 
+        if "n_constrained_cpus" in tk_args:
+            self.n_constrained_cpus = tk_args["n_constrained_cpus"]
+        else:
+            self.n_constrained_cpus = 0
+
         self.tk_args = tk_args
 
         self.sswitch_cli_pids = []
@@ -598,6 +603,7 @@ class ExerciseRunner:
             h.cmd('arp -i %s -s %s %s' % (h_iface.name, sw_ip, sw_iface.mac))
             h.cmd('ethtool --offload %s rx off tx off' % h_iface.name)
             h.cmd('ip route add %s dev %s' % (sw_ip, h_iface.name))
+            h.cmd("sudo tcpdump -i " + h.name + "-eth0 -w /tmp/" + h.name + ".pcap > /tmp/tcpdump" + h.name + ".log 2>&1 &")
             h.setDefaultRoute("via %s" % sw_ip)
 
             if self.operating_mode != "NORMAL" :
@@ -706,6 +712,24 @@ class ExerciseRunner:
                     if name != "lo" :
                         print "Switch: ", sw_pid, " Interface: ", name
                         o_set_netdevice_owner(sw_pid,name)
+
+            sleep(1)
+        elif self.operating_mode == "NORMAL" and self.n_constrained_cpus > 0 :
+            print "Setting Constrained CPU affinity for hosts:"
+            new_affinity_list = ""
+            for i in xrange(0, self.n_constrained_cpus - 1):
+                new_affinity_list += str(i) + ","
+            new_affinity_list += str(self.n_constrained_cpus-1)
+            for host_pid in self.host_pids :
+                print "Host: ", host_pid
+                os.system("sudo taskset -pc " + new_affinity_list + " " + str(host_pid))
+
+            sleep(1)
+
+            print "Setting Constrained CPU affinity for switches:"
+            for sw_pid in self.switch_pids :
+                print "Switch: ", sw_pid
+                os.system("sudo taskset -pc " + new_affinity_list + " " + str(sw_pid))
 
             sleep(1)
 

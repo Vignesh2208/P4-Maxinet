@@ -40,8 +40,8 @@ class CmdMonitorParams (object):
     def start_monitor( self ):
 
         while True:
-            print "Checking for new commands ..."
-            sys.stdout.flush()
+            #print "Checking for new commands ..."
+            #sys.stdout.flush()
             time.sleep(1)
             file_modified = os.path.getmtime(self.cmd_file) - self.file_mtime
             if( file_modified > 0 ):
