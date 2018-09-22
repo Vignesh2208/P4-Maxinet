@@ -74,10 +74,11 @@ parser.add_argument('--pcap_dir', dest="pcap_dir", default="/tmp", help = "Direc
 
 parser.add_argument('--switch_json', dest="switch_json", default="/tmp/routernew.json", help = "P4 Switch Parser JSON")
 
-#parser.add_argument('--switch_exe', dest="switch_exe",default="/home/vignesh/behavioral-model/targets/simple_router/.libs/lt-simple_router",  help="P4 Switch Executable")
+parser.add_argument('--switch_exe', dest="switch_exe",default="/home/moses/behavioral-model/targets/simple_switch/.libs/simple_switch",  help="P4 Switch Executable")
 
-parser.add_argument('--switch_exe', dest="switch_exe",default="simple_switch",  help="P4 Switch Executable")
+#parser.add_argument('--switch_exe', dest="switch_exe",default="simple_switch",  help="P4 Switch Executable")
 
+#parser.add_argument('--switch_exe', dest="switch_exe",default="/home/moses/behavioral-model/targets/simple_router/.libs/simple_router",  help="P4 Switch Executable")
 
 parser.add_argument('--mininet_cli', dest="cli_opt", default="False", help = "Invoke at Mininet CLI in the Workers")
 
@@ -87,57 +88,64 @@ parser.add_argument('--num_workers', dest="num_workers", default=1, help = "Numb
 
 parser.add_argument('--operating_mode', dest="operating_mode", default="NORMAL", help = "Operating Mode: NORMAL/INS_VT/VT ")
 
-parser.add_argument('--rel_cpu_speed', dest="rel_cpu_speed", default=3, help = "Rel cpu speed for INS_VT ")
+parser.add_argument('--host_rel_cpu_speed', dest="host_rel_cpu_speed", default=3, help = "Rel cpu speed for INS_VT ")
 
-parser.add_argument('--n_round_insns', dest="n_round_insns", default=1000000, help = "N instructions per round for INS_VT ")
+parser.add_argument('--switch_rel_cpu_speed', dest="switch_rel_cpu_speed", default=3, help = "Rel cpu speed for INS_VT ")
 
-parser.add_argument('--progress_n_rounds', dest="progress_n_rounds", default=3000, help = "Number of Rounds to Run for INS_VT ")
 
-parser.add_argument('--n_constrained_cpus', dest="n_constrained_cpus", default=2, help = "Number of cpus to constrain in NORMAL mode")
+parser.add_argument('--n_round_insns', dest="n_round_insns", default=100000, help = "N instructions per round for INS_VT ")
+
+parser.add_argument('--progress_duration', dest="progress_duration", default=2, help = "Progress duration in sec INS_VT ")
+
+parser.add_argument('--n_constrained_cpus', dest="n_constrained_cpus", default=0, help = "Number of cpus to constrain in NORMAL mode")
 
 parser.add_argument('--tdf', dest="tdf", default=1.0, help = "TDF for VT mode")
 
-parser.add_argument('--TIMESLICE', dest="TIMESLICE", default=100000, help = "TIMESLICE for VT mode")
+parser.add_argument('--TIMESLICE', dest="TIMESLICE", default=1000000, help = "TIMESLICE for VT mode")
 
 args = parser.parse_args()
 
 if args.topo_fname :
     topo_fname = str(args.topo_fname)
-    print "Input Topo File Name is ...", topo_fname
+    #print "Input Topo File Name is ...", topo_fname
 
 if args.swlog_dir :
     swlog_dir = str(args.swlog_dir)
-    print "Switch Log Dir ...", swlog_dir
+    #print "Switch Log Dir ...", swlog_dir
 
 if args.pcap_dir :
     pcap_dir = str(args.pcap_dir)
-    print "Pcap Dir ...", pcap_dir
+    #print "Pcap Dir ...", pcap_dir
 
 if args.switch_json :
     switch_json = str(args.switch_json)
-    print "Switch Parser JSON File Name ...", switch_json
+    #print "Switch Parser JSON File Name ...", switch_json
 
 if args.switch_exe :
     switch_exe = str(args.switch_exe)
-    print "Switch EXE Name ...", switch_exe
+    #print "Switch EXE Name ...", switch_exe
 
 if args.cli_opt :
     cli_opt = str(args.cli_opt)
-    print "Mininet CLI Option ...", cli_opt
+    #print "Mininet CLI Option ...", cli_opt
 
 if args.swinit_opt :
     swinit_opt = str(args.swinit_opt)
-    print "Switch Init Option ...", swinit_opt
+    #print "Switch Init Option ...", swinit_opt
 
 if args.num_workers :
     num_workers = int(args.num_workers)
-    print "Number of Workers ...", num_workers
+    #print "Number of Workers ...", num_workers
+
+PER_ITER_ADVANCE = 1
+n_rounds_for_progress_duration = int(int(args.progress_duration)*1000000000/(int(args.n_round_insns)*PER_ITER_ADVANCE))
 
 tk_args = {
     "operating_mode" : args.operating_mode,
-    "rel_cpu_speed"  : float(args.rel_cpu_speed),
+    "host_rel_cpu_speed"  : float(args.host_rel_cpu_speed),
+    "switch_rel_cpu_speed"  : float(args.switch_rel_cpu_speed),
     "n_round_insns"  : int(args.n_round_insns),
-    "progress_n_rounds" : int(args.progress_n_rounds),
+    "progress_n_rounds" : int(n_rounds_for_progress_duration),
     "tdf" : float(args.tdf),
     "TIMESLICE" : int(args.TIMESLICE),
     "n_constrained_cpus": int(args.n_constrained_cpus),
@@ -253,12 +261,30 @@ exp.setup()
 
 
 if tk_args["operating_mode"] == "INS_VT" or tk_args["operating_mode"] == "VT" :
+
+    """
+    for sw in my_swlist :
+        exp.program_myswitch(sw)
+
+    print "Loading Cmds to Run on Hosts ..."
+    install_cmnds_to_run_on_hosts(my_workers, data)
+
+    print "Running for 30 secs ..."
+    time.sleep(30)
+
+    os.system("sudo killall tracer")
+    """
+
+
+       
+    n_rounds_for_1sec = int(1000000000/(int(args.n_round_insns)*PER_ITER_ADVANCE))
+
     print "Initializing Tk Instances ..."
     exp.initializeTkInstances()
     raw_input("[Continue...]")
 
-    for i in xrange(0,1000):
-        exp.advanceByNRounds(1)
+    for i in xrange(0,n_rounds_for_1sec):
+        exp.advanceByNRounds(PER_ITER_ADVANCE)
         exp.fireLinkTimers()
 
     print "Start Program Switch objects as per topology ..."
@@ -266,8 +292,9 @@ if tk_args["operating_mode"] == "INS_VT" or tk_args["operating_mode"] == "VT" :
     for sw in my_swlist :
         exp.program_myswitch(sw)
 
-    for i in xrange(0,1000):
-        exp.advanceByNRounds(1)
+    
+    for i in xrange(0,n_rounds_for_1sec):
+        exp.advanceByNRounds(PER_ITER_ADVANCE)
         exp.fireLinkTimers()
         
     print "Loading Cmds to Run on Hosts ..."
@@ -275,15 +302,18 @@ if tk_args["operating_mode"] == "INS_VT" or tk_args["operating_mode"] == "VT" :
 
     print "Advancing Tk Instances By %d " %(tk_args["progress_n_rounds"])
     #exp.advanceByNRounds(tk_args["progress_n_rounds"])
-    n_rounds_run = 0
-    while (n_rounds_run < tk_args["progress_n_rounds"]) :
-        exp.advanceByNRounds(1)
+    n_iters_run = 0
+    while (n_iters_run < tk_args["progress_n_rounds"]) :
+        exp.advanceByNRounds(PER_ITER_ADVANCE)
         exp.fireLinkTimers()
-        #if n_rounds_run % 100 == 0:
-        #    print "Advanced by: ", n_rounds_run
-        n_rounds_run += 1
+        if n_iters_run % 100 == 0:
+            sys.stdout.write(str(n_iters_run) + " ")
+            sys.stdout.flush()
+         
+        n_iters_run += 1
+        sys.stdout.flush()
 
-    raw_input("[Continue...]")
+    raw_input("\n[Continue...]")
 
     print "Stopping Tk Instances ..."
     #On each worker call StopExperiment
@@ -302,11 +332,14 @@ else :
     print "Finished Programming P4 Switches as per topology ..."
     raw_input("[Continue...]")
     exp.initializeTkInstances()
+    
     print "Loading Cmds to Run on Hosts ..."
     install_cmnds_to_run_on_hosts(my_workers, data)
 
     exp.CLI(locals(),globals())
-    print "Running for 30 secs ..."
+    
+
+    print "Running for 5 secs ..."
     time.sleep(5)
     raw_input("[Continue...]")
 

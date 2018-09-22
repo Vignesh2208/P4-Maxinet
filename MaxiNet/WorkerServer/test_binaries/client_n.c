@@ -73,7 +73,7 @@ void my_err(char *msg, ...) {
 
 void usage(char * progname) {
   fprintf(stderr, "Usage:\n");
-  fprintf(stderr, "%s -n <num_pkts> -d <dst_ip_addr>\n", progname);
+  fprintf(stderr, "%s -n <num_pkts> -i <dst_ip_addr>\n", progname);
   fprintf(stderr, "%s -h\n", progname);
   fprintf(stderr, "\n");
   exit(1);
@@ -119,7 +119,7 @@ int main(int argc, char * argv[]){
   
 
   /* Check command line options */
-  while((option = getopt(argc, argv, "n:d:h:")) > 0) {
+  while((option = getopt(argc, argv, "n:i:h:")) > 0) {
     switch(option) {
       case 'h':
         usage(argv[0]);
@@ -127,7 +127,7 @@ int main(int argc, char * argv[]){
       case 'n':
         n_pkts = atoi(optarg);
         break;
-      case 'd':
+      case 'i':
         strcpy(dst_IP, optarg);
         break;
       default:
@@ -154,15 +154,16 @@ int main(int argc, char * argv[]){
   addr_size = sizeof(serverAddr);
   len = sizeof(rcvaddr);
 
-  usleep(1000000);
 
   struct timeval StartTimeStamp;
   gettimeofday(&StartTimeStamp, NULL);
   long StartTS = StartTimeStamp.tv_sec * 1000000 + StartTimeStamp.tv_usec;
 
   printf("My process ID : %d\n", getpid());
+  fflush(stdout);
 
 
+  usleep(100000);
   while(1){
 
     //usleep(10000);

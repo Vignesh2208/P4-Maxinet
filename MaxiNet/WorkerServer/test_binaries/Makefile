@@ -5,8 +5,8 @@ GCC:=gcc
 RM:=rm
 
 all:
-	@gcc  client_n.c -o client_n -lm
-	@gcc  server_n.c -o server_n
+	@gcc  client_n.c -o greeter_client -lm
+	@gcc  server_n.c -o greeter_server
 clean:
-	@rm -f client_n
-	@rm -f server_n
+	@rm -f greeter_client
+	@rm -f greeter_server

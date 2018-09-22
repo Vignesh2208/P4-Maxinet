@@ -70,7 +70,7 @@ void my_err(char *msg, ...) {
 
 void usage(char * progname) {
   fprintf(stderr, "Usage:\n");
-  fprintf(stderr, "%s -d <bind ip addr>\n", progname);
+  fprintf(stderr, "%s -i <bind ip addr>\n", progname);
   fprintf(stderr, "%s -h\n", progname);
   fprintf(stderr, "\n");
   exit(1);
@@ -110,12 +110,12 @@ int main(int argc, char * argv[]){
 
 
   /* Check command line options */
-  while((option = getopt(argc, argv, "d:h:")) > 0) {
+  while((option = getopt(argc, argv, "i:h:")) > 0) {
     switch(option) {
       case 'h':
         usage(argv[0]);
         break;
-      case 'd':
+      case 'i':
         strcpy(dst_IP, optarg);
         break;
       default:
@@ -144,7 +144,8 @@ int main(int argc, char * argv[]){
   /*Initialize size variable to be used later on*/
   addr_size = sizeof(serverStorage);
 
-   printf("My process ID : %d\n", getpid());
+  printf("My process ID : %d\n", getpid());
+  fflush(stdout);
 
   while(1){
 

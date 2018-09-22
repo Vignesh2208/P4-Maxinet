@@ -81,7 +81,7 @@ class P4Switch(Switch):
         self.sw_path = sw_path
         self.json_path = json_path
         self.verbose = verbose
-        logfile = "/tmp/p4s.{}.log".format(self.name)
+        logfile = "/log/p4s.{}.log".format(self.name)
         self.output = open(logfile, 'w')
         self.thrift_port = thrift_port
         if check_listening_on_port(self.thrift_port):
@@ -90,23 +90,23 @@ class P4Switch(Switch):
         self.pcap_dump = pcap_dump
         self.enable_debugger = enable_debugger
         self.log_console = log_console
-        if device_id is not None:
-            self.device_id = device_id
-            P4Switch.device_id = max(P4Switch.device_id, device_id)
-        else:
-            self.device_id = P4Switch.device_id
-            P4Switch.device_id += 1
-        self.nanomsg = "ipc:///tmp/bm-{}-log.ipc".format(self.device_id)
+        #if device_id is not None:
+        #    self.device_id = device_id
+        #    P4Switch.device_id = max(P4Switch.device_id, device_id)
+        #else:
+        self.device_id = P4Switch.device_id
+        P4Switch.device_id += 1
+        self.nanomsg = "ipc:///log/bm-{}-log.ipc".format(self.device_id)
 
         if "operating_mode" in kwargs :
             self.operating_mode = kwargs["operating_mode"]
         else :
             self.operating_mode = "NORMAL"
 
-        if "rel_cpu_speed" in kwargs :
-            self.rel_cpu_speed = kwargs["rel_cpu_speed"]
+        if "switch_rel_cpu_speed" in kwargs :
+            self.switch_rel_cpu_speed = kwargs["switch_rel_cpu_speed"]
         else:
-            self.rel_cpu_speed = 1.0
+            self.switch_rel_cpu_speed = 1.0
 
         if "n_round_insns" in kwargs :
             self.n_round_insns = kwargs["n_round_insns"]
@@ -146,6 +146,7 @@ class P4Switch(Switch):
                 # print "Port ...", str(port)
                 # print "Intf Name ...", intf.name 
                 args.extend(['-i', str(port) + "@" + intf.name])
+		self.cmd("sudo tcpdump -i " + intf.name + " -B 12000 -w /log/" + intf.name + ".pcap > /log/tcpdump" + intf.name + ".log 2>&1 &")
         #if self.pcap_dump:
         #    my_pcap_dir = get_exp_pcap_dir()
         #    pcap_arg = "--pcap="+my_pcap_dir
@@ -161,14 +162,15 @@ class P4Switch(Switch):
         
         if self.enable_debugger:
             args.append("--debugger")
-        if self.operating_mode == "NORMAL" and self.log_console:
+        #if self.log_console:
             #args.append("--log-console")
-            sw_log_file = "/tmp/{}.log".format(self.name)
-            args.append("--log-file " + sw_log_file)
-            args.append("--log-flush")
+        #    sw_log_file = "/log/{}.log".format(self.name)
+        #    args.append("--log-file " + sw_log_file)
+        #    args.append("--log-level debug ")
+        #    args.append("--log-flush")
 
         args.append(self.json_path)
-        logfile = "/tmp/p4s.{}.log".format(self.name)
+        logfile = "/log/p4s.{}.log".format(self.name)
         info(' '.join(args) + "\n")
 
         if self.operating_mode == "NORMAL" or self.operating_mode == "VT" :
@@ -181,7 +183,7 @@ class P4Switch(Switch):
         else :
             tracer_args = [self.tracer_path]
             tracer_args.extend(["-i", str(self.device_id)])
-            tracer_args.extend(["-r", str(self.rel_cpu_speed)])
+            tracer_args.extend(["-r", str(self.switch_rel_cpu_speed)])
             tracer_args.extend(["-n", str(self.n_round_insns)])
             #tracer_args.extend(["-c", "\"" + ' '.join(args) + ' > ' + logfile +"\""])
             tracer_args.extend(["-c","\"" + ' '.join(args) + "\""])

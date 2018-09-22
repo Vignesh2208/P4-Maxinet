@@ -14,7 +14,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--fanout', dest="fanout", default=2, help = "Fanout")
 parser.add_argument('--nhosts_per_switch', dest="nhosts_per_switch", default=2, help = "Num hosts per switch")
 parser.add_argument('--link_delay', dest="link_delay",default=1, help="Link delay")
-parser.add_argument('--grpc_path', dest="grpc_path", default="/home/vignesh/grpc/examples/cpp/helloworld")
+parser.add_argument('--grpc_path', dest="grpc_path", default="/home/moses/grpc/examples/cpp/helloworld")
 
 args = parser.parse_args()
 
@@ -55,7 +55,8 @@ all_host_cmnds = []
 for i in xrange(0, len(client_hosts)):
 	cli_host_name = "h" + str(client_hosts[i])
 	#server_ip = "10.0." + str(server_hosts[random.randint(0,len(server_hosts) - 1)]) + ".10"
-	server_ip = "10.0." + str(server_hosts[(i + fanout) % len(server_hosts)]) + ".10"
+	#server_ip = "10.0." + str(server_hosts[(i + fanout) % len(server_hosts)]) + ".10"
+	server_ip = "10.0." + str(server_hosts[i % len(server_hosts)]) + ".10"
 	cmd = args.grpc_path + "/greeter_client -i " + server_ip + " -n 500"
 	all_host_cmnds.append([cli_host_name, cmd])
 for i in xrange(0, len(server_hosts)):

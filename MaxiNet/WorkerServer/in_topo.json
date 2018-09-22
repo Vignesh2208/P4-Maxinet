@@ -97,203 +97,203 @@
     "host_cmnds": [
         [
             "h1", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.12.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.2.10 -n 500"
         ], 
         [
             "h3", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.14.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.4.10 -n 500"
         ], 
         [
             "h5", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.16.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.6.10 -n 500"
         ], 
         [
             "h7", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.18.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.8.10 -n 500"
         ], 
         [
             "h9", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.20.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.10.10 -n 500"
         ], 
         [
             "h11", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.22.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.12.10 -n 500"
         ], 
         [
             "h13", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.24.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.14.10 -n 500"
         ], 
         [
             "h15", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.26.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.16.10 -n 500"
         ], 
         [
             "h17", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.28.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.18.10 -n 500"
         ], 
         [
             "h19", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.30.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.20.10 -n 500"
         ], 
         [
             "h21", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.32.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.22.10 -n 500"
         ], 
         [
             "h23", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.34.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.24.10 -n 500"
         ], 
         [
             "h25", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.36.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.26.10 -n 500"
         ], 
         [
             "h27", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.38.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.28.10 -n 500"
         ], 
         [
             "h29", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.40.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.30.10 -n 500"
         ], 
         [
             "h31", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.42.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.32.10 -n 500"
         ], 
         [
             "h33", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.44.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.34.10 -n 500"
         ], 
         [
             "h35", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.46.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.36.10 -n 500"
         ], 
         [
             "h37", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.48.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.38.10 -n 500"
         ], 
         [
             "h39", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.50.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.40.10 -n 500"
         ], 
         [
             "h41", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.2.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.42.10 -n 500"
         ], 
         [
             "h43", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.4.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.44.10 -n 500"
         ], 
         [
             "h45", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.6.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.46.10 -n 500"
         ], 
         [
             "h47", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.8.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.48.10 -n 500"
         ], 
         [
             "h49", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.10.10 -n 500"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_client -i 10.0.50.10 -n 500"
         ], 
         [
             "h2", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.2.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.2.10"
         ], 
         [
             "h4", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.4.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.4.10"
         ], 
         [
             "h6", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.6.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.6.10"
         ], 
         [
             "h8", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.8.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.8.10"
         ], 
         [
             "h10", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.10.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.10.10"
         ], 
         [
             "h12", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.12.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.12.10"
         ], 
         [
             "h14", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.14.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.14.10"
         ], 
         [
             "h16", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.16.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.16.10"
         ], 
         [
             "h18", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.18.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.18.10"
         ], 
         [
             "h20", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.20.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.20.10"
         ], 
         [
             "h22", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.22.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.22.10"
         ], 
         [
             "h24", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.24.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.24.10"
         ], 
         [
             "h26", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.26.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.26.10"
         ], 
         [
             "h28", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.28.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.28.10"
         ], 
         [
             "h30", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.30.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.30.10"
         ], 
         [
             "h32", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.32.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.32.10"
         ], 
         [
             "h34", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.34.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.34.10"
         ], 
         [
             "h36", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.36.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.36.10"
         ], 
         [
             "h38", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.38.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.38.10"
         ], 
         [
             "h40", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.40.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.40.10"
         ], 
         [
             "h42", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.42.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.42.10"
         ], 
         [
             "h44", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.44.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.44.10"
         ], 
         [
             "h46", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.46.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.46.10"
         ], 
         [
             "h48", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.48.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.48.10"
         ], 
         [
             "h50", 
-            "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.50.10"
+            "/home/moses/grpc/examples/cpp/helloworld/greeter_server -i 10.0.50.10"
         ]
     ], 
     "hosts": [

@@ -38,6 +38,7 @@ import sys
 import time
 import warnings
 import threading
+import os
 
 from mininet.node import RemoteController, UserSwitch
 from mininet.link import TCIntf, Intf, Link, TCLink
@@ -363,7 +364,8 @@ class Worker(object):
         cmd_get = self.sshtool.get_scp_get_cmd(targethostname=self.hn(),
                                                remote=src,
                                                local=dst)
-        subprocess.call(cmd_get)
+        with open(os.devnull, 'w')  as FNULL:
+            subprocess.call(cmd_get, stdout=FNULL, stderr=subprocess.STDOUT)
 
     def put_file(self, src, dst):
         """transfer file specified by src on Frontend to dst on worker.
@@ -378,7 +380,8 @@ class Worker(object):
                                                local=src,
                                                remote=dst)
         #print "ssh cmd: ", cmd_put
-        subprocess.call(cmd_put)
+        with open(os.devnull, 'w')  as FNULL:
+            subprocess.call(cmd_put, stdout=FNULL, stderr=subprocess.STDOUT)
 
     def sync_get_file(self, src, dst):
         """Transfer file specified by src on worker to dst on Frontend.
@@ -502,7 +505,7 @@ class Worker(object):
  
     # Added by RB
     def program_myswitch(self, swname ):
-        print "At Worker Program My Switch ...",swname
+        #print "At Worker Program My Switch ...",swname
         self.mininet.program_myswitch(swname)
         return
 

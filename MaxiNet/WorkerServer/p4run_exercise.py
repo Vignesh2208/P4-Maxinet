@@ -71,8 +71,10 @@ def configureP4Switch(tk_args,**switch_args):
 
                 if "operating_mode" in tk_args :
                     kwargs["operating_mode"] = tk_args["operating_mode"]
-                if "rel_cpu_speed" in tk_args :
-                    kwargs["rel_cpu_speed"] = tk_args["rel_cpu_speed"]
+                if "host_rel_cpu_speed" in tk_args :
+                    kwargs["host_rel_cpu_speed"] = tk_args["host_rel_cpu_speed"]
+                if "switch_rel_cpu_speed" in tk_args:
+                    kwargs["switch_rel_cpu_speed"] = tk_args["switch_rel_cpu_speed"]
                 if "n_round_insns" in tk_args :
                     kwargs["n_round_insns"] = tk_args["n_round_insns"]
 
@@ -166,11 +168,11 @@ class ExerciseTopo(Topo):
         # print "Host Mac addr ..", mac_addr
         if(link_entry['node1'] == hname):
             self.addLink(link_entry['node1'], link_entry['node2'],
-                            delay=link_entry['latency'], bw=link_entry['bandwidth'], addr1=mac_addr, addr2=mac_addr)
+                            delay=link_entry['latency'], bw=link_entry['bandwidth'], addr1=mac_addr, addr2=mac_addr, max_queue_size=1000000)
             # print "Entry Added ..", link_entry['node1'], link_entry['node2']
         else:
             self.addLink(link_entry['node2'], link_entry['node1'],
-                            delay=link_entry['latency'], bw=link_entry['bandwidth'], addr1=mac_addr, addr=mac_addr)
+                            delay=link_entry['latency'], bw=link_entry['bandwidth'], addr1=mac_addr, addr=mac_addr, max_queue_size=1000000)
             # print "Entry Added ..", link_entry['node2'], link_entry['node1']
 
     # Added by RB
@@ -180,11 +182,11 @@ class ExerciseTopo(Topo):
         # print "Adding Bandwidth ..", link_entry['bandwidth'] 
         if(link_entry['node1'] == swname):
             self.addLink(link_entry['node1'], link_entry['node2'],
-                            delay=link_entry['latency'], bw=link_entry['bandwidth'])
+                            delay=link_entry['latency'], bw=link_entry['bandwidth'], max_queue_size=1000000)
             # print "Entry Added ..", link_entry['node1'], link_entry['node2']
         else:
             self.addLink(link_entry['node2'], link_entry['node1'],
-                            delay=link_entry['latency'], bw=link_entry['bandwidth'])
+                            delay=link_entry['latency'], bw=link_entry['bandwidth'], max_queue_size=1000000)
             # print "Entry Added ..", link_entry['node2'], link_entry['node1']
 
 
@@ -310,10 +312,14 @@ class ExerciseRunner:
         else :
             self.operating_mode = "NORMAL"
 
-        if "rel_cpu_speed" in tk_args :
-            self.rel_cpu_speed = tk_args["rel_cpu_speed"]
+        if "host_rel_cpu_speed" in tk_args :
+            self.host_rel_cpu_speed = tk_args["host_rel_cpu_speed"]
         else :
-            self.rel_cpu_speed = 1.0
+            self.host_rel_cpu_speed = 1.0
+        if "switch_rel_cpu_speed" in tk_args :
+            self.switch_rel_cpu_speed = tk_args["switch_rel_cpu_speed"]
+        else :
+            self.switch_rel_cpu_speed = 1.0
 
         if "n_round_insns" in tk_args :
             self.n_round_insns = tk_args["n_round_insns"]
@@ -509,7 +515,7 @@ class ExerciseRunner:
                 logfile = "/tmp/sswitch_cli_" + str(sswitch_cli_id) + ".txt"
                 tracer_args = [tracer_path]
                 tracer_args.extend(["-i", str(sswitch_cli_id)])
-                tracer_args.extend(["-r", str(self.rel_cpu_speed)])
+                tracer_args.extend(["-r", str(self.switch_rel_cpu_speed)])
                 tracer_args.extend(["-n", str(self.n_round_insns)])
                 
                 cli_input_commands = sw_dict['cli_input']
@@ -564,7 +570,7 @@ class ExerciseRunner:
                     logfile = "/tmp/sswitch_cli_" + str(sswitch_cli_id) + ".txt"
                     tracer_args = [tracer_path]
                     tracer_args.extend(["-i", str(sswitch_cli_id)])
-                    tracer_args.extend(["-r", str(self.rel_cpu_speed)])
+                    tracer_args.extend(["-r", str(self.switch_rel_cpu_speed)])
                     tracer_args.extend(["-n", str(self.n_round_insns)])
                     
                     cli_input_commands = sw_dict['cli_input']
@@ -603,19 +609,19 @@ class ExerciseRunner:
             h.cmd('arp -i %s -s %s %s' % (h_iface.name, sw_ip, sw_iface.mac))
             h.cmd('ethtool --offload %s rx off tx off' % h_iface.name)
             h.cmd('ip route add %s dev %s' % (sw_ip, h_iface.name))
-            h.cmd("sudo tcpdump -i " + h.name + "-eth0 -w /tmp/" + h.name + ".pcap > /tmp/tcpdump" + h.name + ".log 2>&1 &")
+            h.cmd("sudo tcpdump -i " + h.name + "-eth0 -B 12000 -w /log/" + h.name + ".pcap > /log/tcpdump" + h.name + ".log 2>&1 &")
             h.setDefaultRoute("via %s" % sw_ip)
 
-            if self.operating_mode != "NORMAL" :
+            if self.operating_mode == "INS_VT" :
                 
-                logfile = "/tmp/h{}.log".format(h.name)
+                logfile = "/log/h{}.log".format(h.name)
                 tracer_path = "/usr/bin/tracer"
                 monitor_command = "python " + script_dir + "/new_cmd_monitor.py --cmd_file=/tmp/h" + str(h.name[1:]) + "_cmnds.txt" 
                 #monitor_command = "python " + script_dir + "/new_cmd_monitor.py --cmd_file=/tmp/h" + str(host_id) + "_cmnds.txt > " + logfile
                 host_id += len(self.switches)
                 tracer_args = [tracer_path]
                 tracer_args.extend(["-i", str(host_id)])
-                tracer_args.extend(["-r", str(self.rel_cpu_speed)])
+                tracer_args.extend(["-r", str(self.host_rel_cpu_speed)])
                 tracer_args.extend(["-n", str(self.n_round_insns)])
                 tracer_args.extend(["-c", "\"" + monitor_command + "\""])
                 tracer_args.append("-s")
@@ -738,10 +744,13 @@ class ExerciseRunner:
         if n > 0 and self.operating_mode == "INS_VT" :
             progress_n_rounds(n)
         elif n > 0 and self.operating_mode == "VT" :
+            if self.n_rounds_progressed == 0 :
+                o_startExp()
             o_progress_exp_cbe(n)
 
         self.n_rounds_progressed = self.n_rounds_progressed + n
-        print "Total number of rounds progressed: %d " %(self.n_rounds_progressed)
+        if self.n_rounds_progressed % 1 == 0 :
+            print "Total number of rounds progressed: %d " %(self.n_rounds_progressed)
 
     def stop_tk_experiment(self) :
         if self.operating_mode == "INS_VT" :

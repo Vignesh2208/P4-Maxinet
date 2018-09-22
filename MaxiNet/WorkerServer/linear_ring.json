@@ -24,12 +24,12 @@
           ["s5", "h5",2], ["s6", "h6",2]
      ],
      "host_cmnds" : [
-        ["h1", "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.2.10 -n 100" ],
-        ["h2", "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.2.10"],
-        ["h3", "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.4.10 -n 100" ],
-        ["h4", "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.4.10"],
-        ["h5", "/home/vignesh/grpc/examples/cpp/helloworld/greeter_client -i 10.0.6.10 -n 100" ],
-        ["h6", "/home/vignesh/grpc/examples/cpp/helloworld/greeter_server -i 10.0.6.10"]
+        ["h1", "/home/moses/P4-MaxiNet/MaxiNet/WorkerServer/test_binaries/greeter_client -i 10.0.2.10 -n 500" ],
+        ["h2", "/home/moses/P4-MaxiNet/MaxiNet/WorkerServer/test_binaries/greeter_server -i 10.0.2.10"],
+        ["h3", "/home/moses/P4-MaxiNet/MaxiNet/WorkerServer/test_binaries/greeter_client -i 10.0.4.10 -n 500" ],
+        ["h4", "/home/moses/P4-MaxiNet/MaxiNet/WorkerServer/test_binaries/greeter_server -i 10.0.4.10"],
+        ["h5", "/home/moses/P4-MaxiNet/MaxiNet/WorkerServer/test_binaries/greeter_client -i 10.0.6.10 -n 500" ],
+        ["h6", "/home/moses/P4-MaxiNet/MaxiNet/WorkerServer/test_binaries/greeter_server -i 10.0.6.10"]
      ],
      "allowed_paths" : {
      }

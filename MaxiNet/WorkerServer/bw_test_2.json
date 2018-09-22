@@ -1,0 +1,18 @@
+{
+     "hosts" : [
+        "h1",
+        "h2"
+     ],
+     "switches" : {
+        "s1": { "cli_input" :   "s1-cmnds.txt" }
+     },
+     "links" : [
+          ["h1", "s1",2], ["h2","s1",2]
+     ],
+     "host_cmnds" : [
+        ["h1", "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.2.10" ],
+        ["h2", "iperf -s -u -i 0.5 -l 1400B"]
+     ],
+     "allowed_paths" : {
+     }
+}
