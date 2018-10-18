@@ -497,35 +497,14 @@ class ExerciseRunner:
    
 
             tracer_path = "/usr/bin/tracer"
-
-            #if self.operating_mode == "NORMAL" :
-            if True :
-
-                cli_input_commands = sw_dict['cli_input']
-                self.logger('Configuring switch %s with file %s' % (sw_name, cli_input_commands))
-                with open(cli_input_commands, 'r') as fin:
-                    cli_outfile = '%s/%s_cli_output.log'%(self.log_dir, sw_name)
-                    with open(cli_outfile, 'w') as fout:
-                        subprocess.Popen([cli, '--thrift-port', str(thrift_port)],
-                                         stdin=fin, stdout=fout)
-            else :
-                
-                sswitch_cli_id = sw_obj.device_id + len(self.switches) + len(self.self.topo.hosts())
-                print "Simple Switch CLI for Switch %d is %d" %(sw_obj.device_id,sswitch_cli_id)
-                logfile = "/tmp/sswitch_cli_" + str(sswitch_cli_id) + ".txt"
-                tracer_args = [tracer_path]
-                tracer_args.extend(["-i", str(sswitch_cli_id)])
-                tracer_args.extend(["-r", str(self.switch_rel_cpu_speed)])
-                tracer_args.extend(["-n", str(self.n_round_insns)])
-                
-                cli_input_commands = sw_dict['cli_input']
-                sswitch_cli_cmd = cli + " --thrift-port " + str(thrift_port) + " < " + cli_input_commands
-                tracer_args.extend(['-c', "\"" +  sswitch_cli_cmd + "\""])
-                self.logger('Configuring switch %s with file %s' % (sw_name, cli_input_commands))
-                with tempfile.NamedTemporaryFile() as f:
-                    os.system(' '.join(tracer_args) + ' >' + logfile + ' 2>&1 & echo $! >> ' + f.name)
-                    pid = int(f.read())
-                    self.sswitch_cli_pids.append(pid)
+            cli_input_commands = sw_dict['cli_input']
+            self.logger('Configuring switch %s with file %s' % (sw_name, cli_input_commands))
+            with open(cli_input_commands, 'r') as fin:
+                cli_outfile = '%s/%s_cli_output.log'%(self.log_dir, sw_name)
+                with open(cli_outfile, 'w') as fout:
+                    subprocess.Popen([cli, '--thrift-port', str(thrift_port)],
+                                     stdin=fin, stdout=fout)
+           
                 
             break
 
@@ -553,34 +532,17 @@ class ExerciseRunner:
 
                 tracer_path = "/usr/bin/tracer"
 
-                #if self.operating_mode == "NORMAL" :
-                if True :
+                
+                
 
-                    cli_input_commands = sw_dict['cli_input']
-                    self.logger('Configuring switch %s with file %s' % (sw_name, cli_input_commands))
-                    with open(cli_input_commands, 'r') as fin:
-                        cli_outfile = '%s/%s_cli_output.log'%(self.log_dir, sw_name)
-                        with open(cli_outfile, 'w') as fout:
-                            subprocess.Popen([cli, '--thrift-port', str(thrift_port)],
+                cli_input_commands = sw_dict['cli_input']
+                self.logger('Configuring switch %s with file %s' % (sw_name, cli_input_commands))
+                with open(cli_input_commands, 'r') as fin:
+                    cli_outfile = '%s/%s_cli_output.log'%(self.log_dir, sw_name)
+                    with open(cli_outfile, 'w') as fout:
+                        subprocess.Popen([cli, '--thrift-port', str(thrift_port)],
                                              stdin=fin, stdout=fout)
-                else :
-                    
-                    sswitch_cli_id = sw_obj.device_id + len(self.switches) + len(self.topo.hosts())
-                    print "Simple Switch CLI for Switch %d is %d" %(sw_obj.device_id,sswitch_cli_id)
-                    logfile = "/tmp/sswitch_cli_" + str(sswitch_cli_id) + ".txt"
-                    tracer_args = [tracer_path]
-                    tracer_args.extend(["-i", str(sswitch_cli_id)])
-                    tracer_args.extend(["-r", str(self.switch_rel_cpu_speed)])
-                    tracer_args.extend(["-n", str(self.n_round_insns)])
-                    
-                    cli_input_commands = sw_dict['cli_input']
-                    sswitch_cli_cmd = cli + " --thrift-port " + str(thrift_port) + " < " + cli_input_commands
-                    tracer_args.extend(['-c', "\"" +  sswitch_cli_cmd + "\""])
-                    self.logger('Configuring switch %s with file %s' % (sw_name, cli_input_commands))
-                    with tempfile.NamedTemporaryFile() as f:
-                        os.system(' '.join(tracer_args) + ' >' + logfile + ' 2>&1 & echo $! >> ' + f.name)
-                        pid = int(f.read())
-                        self.sswitch_cli_pids.append(pid)
+              
         else :
             print "Skipping Switch Initialization At Startup ..."
 
@@ -600,7 +562,7 @@ class ExerciseRunner:
             # phony IP to lie to the host about
             host_id = int(host_name[1:]) - 1
             sw_ip = '10.0.%d.1' % host_id
-            # sw_ip = '10.0.%d.254' % host_id ## Modified by RB
+            
 
             # Ensure each host's interface name is unique, or else
             # mininet cannot shutdown gracefully
@@ -609,7 +571,7 @@ class ExerciseRunner:
             h.cmd('arp -i %s -s %s %s' % (h_iface.name, sw_ip, sw_iface.mac))
             h.cmd('ethtool --offload %s rx off tx off' % h_iface.name)
             h.cmd('ip route add %s dev %s' % (sw_ip, h_iface.name))
-            h.cmd("sudo tcpdump -i " + h.name + "-eth0 -B 12000 -w /log/" + h.name + ".pcap > /log/tcpdump" + h.name + ".log 2>&1 &")
+            #h.cmd("sudo tcpdump -i " + h.name + "-eth0 -B 12000 -w /log/" + h.name + ".pcap > /log/tcpdump" + h.name + ".log 2>&1 &")
             h.setDefaultRoute("via %s" % sw_ip)
 
             if self.operating_mode == "INS_VT" :
@@ -634,7 +596,7 @@ class ExerciseRunner:
                     self.host_pids[pid] = h
                     print "Host %s Startup monitor pid %d. Tracer-id: %d" %(h.name, pid, host_id)
             else :
-                logfile = "/tmp/h{}.log".format(h.name)
+                logfile = "/log/h{}.log".format(h.name)
                 monitor_command = "python " + script_dir + "/new_cmd_monitor.py --cmd_file=/tmp/h" + str(h.name[1:]) + "_cmnds.txt"
                 with tempfile.NamedTemporaryFile() as f:
                     h.cmd(monitor_command + ' >' + logfile + ' 2>&1 & echo $! >> ' + f.name)

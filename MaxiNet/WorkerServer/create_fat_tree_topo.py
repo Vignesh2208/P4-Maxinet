@@ -31,7 +31,7 @@ client_hosts = []
 server_hosts = []
 all_hosts = []
 for i in xrange(1, n_hosts + 1):
-	if i % 2 == 1 :
+	if i <= n_hosts/2 :
 		client_hosts.append(i)
 	else:
 		server_hosts.append(i)

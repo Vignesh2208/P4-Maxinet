@@ -90,10 +90,6 @@ class P4Switch(Switch):
         self.pcap_dump = pcap_dump
         self.enable_debugger = enable_debugger
         self.log_console = log_console
-        #if device_id is not None:
-        #    self.device_id = device_id
-        #    P4Switch.device_id = max(P4Switch.device_id, device_id)
-        #else:
         self.device_id = P4Switch.device_id
         P4Switch.device_id += 1
         self.nanomsg = "ipc:///log/bm-{}-log.ipc".format(self.device_id)
@@ -137,37 +133,17 @@ class P4Switch(Switch):
         info("Starting P4 switch {}.\n".format(self.name))
         args = [self.sw_path]
         for port, intf in self.intfs.items():
-            # print "Mininet switch start ..."
-            # print "switch name ...", self.name
-            # print "Port ...", port
-            # print "Intf ...", intf
             if not intf.IP():
-                # print "Args Extend ..."
-                # print "Port ...", str(port)
-                # print "Intf Name ...", intf.name 
                 args.extend(['-i', str(port) + "@" + intf.name])
-		self.cmd("sudo tcpdump -i " + intf.name + " -B 12000 -w /log/" + intf.name + ".pcap > /log/tcpdump" + intf.name + ".log 2>&1 &")
-        #if self.pcap_dump:
-        #    my_pcap_dir = get_exp_pcap_dir()
-        #    pcap_arg = "--pcap="+my_pcap_dir
-        #    args.append(pcap_arg)  # Modified by RB
-            # args.append("--pcap")
-            # args.append("--useFiles")
+		#self.cmd("sudo tcpdump -i " + intf.name + " -B 12000 -w /log/" + intf.name + ".pcap > /log/tcpdump" + intf.name + ".log 2>&1 &")
+        
         if self.thrift_port:
             args.extend(['--thrift-port', str(self.thrift_port)])
-        #if self.nanomsg:
-        #    args.extend(['--nanolog', self.nanomsg])
         args.extend(['--device-id', str(self.device_id)])
         P4Switch.device_id += 1
         
         if self.enable_debugger:
             args.append("--debugger")
-        #if self.log_console:
-            #args.append("--log-console")
-        #    sw_log_file = "/log/{}.log".format(self.name)
-        #    args.append("--log-file " + sw_log_file)
-        #    args.append("--log-level debug ")
-        #    args.append("--log-flush")
 
         args.append(self.json_path)
         logfile = "/log/p4s.{}.log".format(self.name)
@@ -185,21 +161,16 @@ class P4Switch(Switch):
             tracer_args.extend(["-i", str(self.device_id)])
             tracer_args.extend(["-r", str(self.switch_rel_cpu_speed)])
             tracer_args.extend(["-n", str(self.n_round_insns)])
-            #tracer_args.extend(["-c", "\"" + ' '.join(args) + ' > ' + logfile +"\""])
             tracer_args.extend(["-c","\"" + ' '.join(args) + "\""])
             tracer_args.append("-s")
             with tempfile.NamedTemporaryFile() as f:
                 tracer_cmd = ' '.join(tracer_args) + ' > ' + logfile + ' 2>&1 & echo $! >> ' + f.name
                 print "Switch : %s Tracer cmd : %s " %(self.name,tracer_cmd)
                 self.cmd(tracer_cmd)
-                #self.cmd(' '.join(tracer_args) + ' & echo $! >> ' + f.name)
                 pid = int(f.read())
                 self.switch_pid = pid
 
         debug("P4 switch {} PID is {}.\n".format(self.name, self.switch_pid))
-        #if not self.check_switch_started(self.switch_pid):
-        #    error("P4 switch {} did not start correctly.\n".format(self.name))
-        #    exit(1)
         info("P4 switch {} has been started.\n".format(self.name))
 
     def stop(self):

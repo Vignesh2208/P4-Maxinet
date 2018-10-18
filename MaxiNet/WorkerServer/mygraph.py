@@ -121,6 +121,24 @@ class MyTopoGraph(object):
                 isolated += [vertex]
         return isolated
 
+    def bfs_paths(self, graph, start, goal):
+        queue = [(start, [start])]
+        while queue:
+            (vertex, path) = queue.pop(0)
+            for next in graph[vertex] :
+                if next not in set(path):
+                    if next == goal:
+                        yield path + [next]
+                    else:
+                        queue.append((next, path + [next]))
+
+    def shortest_path(self, graph, start, goal):
+        try:
+            return next(self.bfs_paths(graph, start, goal))
+        except StopIteration:
+            return None
+
+
     def find_path(self, start_vertex, end_vertex, path=[]):
         """ find a path from start vertex to end vertex in graph """
 
@@ -131,25 +149,32 @@ class MyTopoGraph(object):
 
         if start_vertex not in graph:
             return None
-
+        """
         for vertex in graph[start_vertex]:
             if vertex not in path:
                 extended_path = self.find_path(vertex, end_vertex,path)
                 if extended_path:
                     return extended_path
+       
         return None
+        """
+        return list(self.shortest_path(graph, start_vertex, end_vertex))
+
+
 
     def find_all_path(self, start_vertex, end_vertex, path=[]):
         """ find all paths from start vertex to end vertex in graph """
 
         graph = self.__graph_dict
         path = path + [start_vertex]
+
         if start_vertex == end_vertex:
             return [path]
 
         if start_vertex not in graph:
             return []
 
+        """
         paths = []
         for vertex in graph[start_vertex]:
             if vertex not in path:
@@ -157,6 +182,9 @@ class MyTopoGraph(object):
                 for p in extended_paths:
                     paths.append(p)
         return paths
+        """
+        return [self.shortest_path(graph, start_vertex, end_vertex)]
+
 
     def is_connected(self, vertices_encountered = None, start_vertex=None):
         """ Determines if the graph is connected """

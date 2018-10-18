@@ -48,7 +48,7 @@ def install_cmnds_to_run_on_hosts(my_workers, data) :
             f.write(my_cmd + "\n")
         for worker in my_workers :
             worker.put_file("/tmp/tmp_" + str(host) + "_cmnds.txt", "/tmp/" + str(host) + "_cmnds.txt") 
-    raw_input("[Continue...]")
+    #raw_input("[Continue...]")
 
 # Include Project Directory in PYTHONPATH
 # This is done to pickup changes done by us in MaxiNet Frontend
@@ -102,6 +102,8 @@ parser.add_argument('--n_constrained_cpus', dest="n_constrained_cpus", default=0
 parser.add_argument('--tdf', dest="tdf", default=1.0, help = "TDF for VT mode")
 
 parser.add_argument('--TIMESLICE', dest="TIMESLICE", default=1000000, help = "TIMESLICE for VT mode")
+
+parser.add_argument('--exp_name', dest="exp_name", default="Kronos_Default", help = "Log storage directory name")
 
 args = parser.parse_args()
 
@@ -175,6 +177,8 @@ f.close()
 
 # Rename the file t1_experiment.cfg -> experiment.cfg
 os.rename("t1_experiment.cfg", "experiment.cfg")
+os.system("sudo rm /log/*")
+
 
 # Now also copy the given input topo file as in_topo.json in each of worker
 copy2(topo_fname,'in_topo.json')
@@ -281,14 +285,14 @@ if tk_args["operating_mode"] == "INS_VT" or tk_args["operating_mode"] == "VT" :
 
     print "Initializing Tk Instances ..."
     exp.initializeTkInstances()
-    raw_input("[Continue...]")
+    #raw_input("[Continue...]")
 
     for i in xrange(0,n_rounds_for_1sec):
         exp.advanceByNRounds(PER_ITER_ADVANCE)
         exp.fireLinkTimers()
 
     print "Start Program Switch objects as per topology ..."
-    raw_input("[Continue...]")
+    #raw_input("[Continue...]")
     for sw in my_swlist :
         exp.program_myswitch(sw)
 
@@ -313,12 +317,12 @@ if tk_args["operating_mode"] == "INS_VT" or tk_args["operating_mode"] == "VT" :
         n_iters_run += 1
         sys.stdout.flush()
 
-    raw_input("\n[Continue...]")
+    #raw_input("\n[Continue...]")
 
     print "Stopping Tk Instances ..."
     #On each worker call StopExperiment
     exp.stopTkInstances()
-    raw_input("[Continue...]")
+    #raw_input("[Continue...]")
     if tk_args["operating_mode"] == "VT" :
         os.system("sudo killall client_n")
         os.system("sudo killall server_n")
@@ -326,11 +330,11 @@ if tk_args["operating_mode"] == "INS_VT" or tk_args["operating_mode"] == "VT" :
 else :
 
     print "Start Program Switch objects as per topology ..."
-    raw_input("[Continue...]")
+    #raw_input("[Continue...]")
     for sw in my_swlist :
         exp.program_myswitch(sw)
     print "Finished Programming P4 Switches as per topology ..."
-    raw_input("[Continue...]")
+    #raw_input("[Continue...]")
     exp.initializeTkInstances()
     
     print "Loading Cmds to Run on Hosts ..."
@@ -341,11 +345,18 @@ else :
 
     print "Running for 5 secs ..."
     time.sleep(5)
-    raw_input("[Continue...]")
+    #raw_input("[Continue...]")
 
 print "Tearing Down Worker Mininet Instances ..."
 exp.stop()
-raw_input("[Continue]")  # wait for user to acknowledge network connectivity
+#raw_input("[Continue]")  # wait for user to acknowledge network connectivity
 os.system("rm *.txt")
 os.system("rm *.cfg")
+os.system("sudo mkdir -p /home/moses/exp")
+os.system("sudo mkdir -p /home/moses/exp/" + args.exp_name)
+os.system("sudo rm -rf /home/moses/exp/" + args.exp_name + "/*")
+os.system("sudo mv /log/* /home/moses/exp/" + args.exp_name + "/")
+os.system("sudo chmod -R 777 /home/moses/exp/" + args.exp_name)
+
+
 

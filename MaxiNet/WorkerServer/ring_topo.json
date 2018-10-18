@@ -1,0 +1,122 @@
+{
+    "switches": {
+        "s2": {
+            "cli_input": "s2-cmnds.txt"
+        }, 
+        "s1": {
+            "cli_input": "s1-cmnds.txt"
+        }
+    }, 
+    "host_cmnds": [
+        [
+            "h1", 
+            "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.6.10"
+        ], 
+        [
+            "h2", 
+            "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.7.10"
+        ], 
+        [
+            "h3", 
+            "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.8.10"
+        ], 
+        [
+            "h4", 
+            "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.9.10"
+        ], 
+        [
+            "h5", 
+            "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.10.10"
+        ], 
+        [
+            "h6", 
+            "iperf -s -u -i 0.5 -l 1400B"
+        ], 
+        [
+            "h7", 
+            "iperf -s -u -i 0.5 -l 1400B"
+        ], 
+        [
+            "h8", 
+            "iperf -s -u -i 0.5 -l 1400B"
+        ], 
+        [
+            "h9", 
+            "iperf -s -u -i 0.5 -l 1400B"
+        ], 
+        [
+            "h10", 
+            "iperf -s -u -i 0.5 -l 1400B"
+        ]
+    ], 
+    "hosts": [
+        "h1", 
+        "h2", 
+        "h3", 
+        "h4", 
+        "h5", 
+        "h6", 
+        "h7", 
+        "h8", 
+        "h9", 
+        "h10"
+    ], 
+    "allowed_paths": {}, 
+    "links": [
+        [
+            "s1", 
+            "s2", 
+            1
+        ], 
+        [
+            "h1", 
+            "s1", 
+            1
+        ], 
+        [
+            "h2", 
+            "s1", 
+            1
+        ], 
+        [
+            "h3", 
+            "s1", 
+            1
+        ], 
+        [
+            "h4", 
+            "s1", 
+            1
+        ], 
+        [
+            "h5", 
+            "s1", 
+            1
+        ], 
+        [
+            "h6", 
+            "s2", 
+            1
+        ], 
+        [
+            "h7", 
+            "s2", 
+            1
+        ], 
+        [
+            "h8", 
+            "s2", 
+            1
+        ], 
+        [
+            "h9", 
+            "s2", 
+            1
+        ], 
+        [
+            "h10", 
+            "s2", 
+            1
+        ]
+    ]
+}
