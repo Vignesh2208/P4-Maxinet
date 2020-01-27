@@ -189,7 +189,9 @@ int main(int argc, char * argv[]){
     
     
     //if(pkt_no % 20 == 0)
-    do_debug("Sending REQUEST no %d\n", pkt_no);
+    
+
+    /*do_debug("Sending REQUEST no %d\n", pkt_no); */
 
     gettimeofday(&start_sendto,NULL);
     gettimeofday(&SendTimeStamp, NULL);
@@ -238,11 +240,12 @@ int main(int argc, char * argv[]){
         stdev = 0.0;
     }
     else{
-      stdev = sqrt(stdev);
+	stdev = sqrt(stdev);
     }
 
     //if(pkt_no % 20 == 0){
 
+    /*
     do_debug("Transmit Time (sec) : %f\n", transit_time);
     do_debug("Start Time (sec) : %lu, Recv Time: %lu\n", StartTS, RecvTS);
     do_debug("Avg delay (sec) : %f\n", avg_transmit_time/(float)count);
@@ -252,6 +255,7 @@ int main(int argc, char * argv[]){
     do_debug("Avg sendto : %f (us)\n", avg_sendto/n_sendto);
     do_debug("Avg flush : %f (us)\n", avg_flush/n_flush);
     do_debug("#####################################################\n"); 
+    */
 
     //}
 

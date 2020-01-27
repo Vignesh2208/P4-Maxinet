@@ -29,6 +29,7 @@ Worker: A Worker is part of a Cluster and runs a part of the emulated
 """
 
 import atexit
+import time
 import functools
 import logging
 import random
@@ -39,6 +40,7 @@ import time
 import warnings
 import threading
 import os
+from joblib import Parallel, delayed
 
 from mininet.node import RemoteController, UserSwitch
 from mininet.link import TCIntf, Intf, Link, TCLink
@@ -48,6 +50,8 @@ from MaxiNet.Frontend.cli import CLI
 from MaxiNet.tools import Tools, MaxiNetConfig, SSH_Tool
 from MaxiNet.Frontend.partitioner import Partitioner
 
+from Queue import Queue
+from threading import Thread
 
 logger = logging.getLogger(__name__)
 
@@ -516,7 +520,7 @@ class Worker(object):
         self.mininet.set_netdevice_owners()
 
     def progress_by_n_rounds(self,n) :
-        self.mininet.progress_by_n_rounds(n)
+        return self.mininet.progress_by_n_rounds(n)
 
     def fireLinkIntfTimers(self) :
         self.mininet.fireLinkIntfTimers()
@@ -900,6 +904,24 @@ class Cluster(object):
         self.tunhelper = TunHelper()
 
 
+def advance_worker(q_get, q_put, worker_obj, experiment_obj) :
+    print "Advance worker thread started!"
+    worker_name = worker_obj.hn()
+    while True:
+        n = q_get.get()
+        if n > 0 :
+            experiment_obj.exp_stats[worker_name]["round_start_time"].append(float(time.time()))
+            useful_work_time = float(worker_obj.progress_by_n_rounds(n))
+            experiment_obj.exp_stats[worker_name]["round_end_time"].append(float(time.time()))
+            experiment_obj.exp_stats[worker_name]["useful_work_time"].append(useful_work_time)
+            q_put.put(0)
+
+        else:
+            print "Exiting Advance worker thread"
+            q_put.put(0)
+            break
+    
+
 class Experiment(object):
     """Class to manage MaxiNet Experiment.
 
@@ -995,6 +1017,9 @@ class Experiment(object):
         self.switches = []
         self.switch = switch
         self.worker_objs = []
+        self.advance_worker_threads = []
+        self.advance_worker_queues = []
+        self.exp_stats = {}
         if controller:
             contr = controller
         else:
@@ -1529,6 +1554,20 @@ class Experiment(object):
                         topo=topo,
                         tunnels=tunnels[wid])
                 self.worker_objs.append(worker)
+                if self.cluster.tk_args["operating_mode"] != "NORMAL" :
+                    self.exp_stats[thn] = {}
+                    self.exp_stats[thn]["round_start_time"] = []
+                    self.exp_stats[thn]["round_end_time"] = []
+                    self.exp_stats[thn]["useful_work_time"] = []
+                    q_get = Queue(maxsize=0)
+                    q_put = Queue(maxsize=0)
+                    advance_worker_thread = Thread(target=advance_worker, args=(q_get,q_put,worker, self))
+                    self.advance_worker_queues.append((q_get,q_put))
+                    self.advance_worker_threads.append(advance_worker_thread)
+                    advance_worker_thread.start()
+                    
+
+                
             except Pyro4.errors.ConnectionClosedError:
                 self.logger.error("Remote " + thn + " exited abnormally. " +
                                   "This is probably due to mininet not" +
@@ -1559,8 +1598,15 @@ class Experiment(object):
             worker.set_netdevice_owners()
 
     def advanceByNRounds(self, n) :
-        for worker in self.worker_objs:
-            worker.progress_by_n_rounds(n)
+        #for worker in self.worker_objs:
+        #    worker.progress_by_n_rounds(n)
+        if n > 0 :
+            for i in xrange(0,len(self.worker_objs)) :
+                q_get, q_put = self.advance_worker_queues[i]
+                q_get.put(n)
+            for i in xrange(0,len(self.worker_objs)) :
+                q_get, q_put = self.advance_worker_queues[i]
+                q_put.get()
 
     def fireLinkTimers(self) :
         for worker in self.worker_objs:
@@ -1569,6 +1615,15 @@ class Experiment(object):
     def stopTkInstances(self) :
         for worker in self.worker_objs:
             worker.stop_tk_experiment()
+        for i in xrange(0,len(self.worker_objs)) :
+            q_get, q_put = self.advance_worker_queues[i]
+            t = self.advance_worker_threads[i]
+            q_get.put(-1)
+        for i in xrange(0,len(self.worker_objs)) :
+            q_get, q_put = self.advance_worker_queues[i]
+            q_put.get()
+            t = self.advance_worker_threads[i]
+            t.join()
             
 
 

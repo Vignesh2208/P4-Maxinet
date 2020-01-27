@@ -609,7 +609,7 @@ class MininetManager(object):
 
     @Pyro4.expose
     def progress_by_n_rounds(self,n) :
-        self.exercise.progress_by_n_rounds(n)
+        return str(self.exercise.progress_by_n_rounds(n))
 
     @Pyro4.expose
     def stop_tk_experiment(self) :

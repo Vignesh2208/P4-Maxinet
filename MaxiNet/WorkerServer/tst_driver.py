@@ -19,7 +19,7 @@ import time
 import Pyro4
 import threading
 import traceback
-
+import numpy as np
 import json 
 
 import mininet.term
@@ -39,7 +39,12 @@ from shutil import *
 import pdb
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-
+exp_stats = {}
+exp_stats["round_completion_times"] = []
+exp_stats["mu_rct"] = 0.0
+exp_stats["std_rct"] = 0.0
+exp_stats["start_time"] = 0.0
+exp_stats["end_time"] = 0.0
 
 def install_cmnds_to_run_on_hosts(my_workers, data) :
     for host, my_cmd in data["host_cmnds"] :
@@ -95,13 +100,13 @@ parser.add_argument('--switch_rel_cpu_speed', dest="switch_rel_cpu_speed", defau
 
 parser.add_argument('--n_round_insns', dest="n_round_insns", default=100000, help = "N instructions per round for INS_VT ")
 
-parser.add_argument('--progress_duration', dest="progress_duration", default=2, help = "Progress duration in sec INS_VT ")
+parser.add_argument('--progress_duration', dest="progress_duration", default=1, help = "Progress duration in sec INS_VT ")
 
 parser.add_argument('--n_constrained_cpus', dest="n_constrained_cpus", default=0, help = "Number of cpus to constrain in NORMAL mode")
 
-parser.add_argument('--tdf', dest="tdf", default=1.0, help = "TDF for VT mode")
+parser.add_argument('--tdf', dest="tdf", default=3.0, help = "TDF for VT mode")
 
-parser.add_argument('--TIMESLICE', dest="TIMESLICE", default=1000000, help = "TIMESLICE for VT mode")
+parser.add_argument('--TIMESLICE', dest="TIMESLICE", default=100000, help = "TIMESLICE for VT mode")
 
 parser.add_argument('--exp_name', dest="exp_name", default="Kronos_Default", help = "Log storage directory name")
 
@@ -140,7 +145,11 @@ if args.num_workers :
     #print "Number of Workers ...", num_workers
 
 PER_ITER_ADVANCE = 1
-n_rounds_for_progress_duration = int(int(args.progress_duration)*1000000000/(int(args.n_round_insns)*PER_ITER_ADVANCE))
+
+if args.operating_mode == "INS_VT" :
+    n_rounds_for_progress_duration = int(int(args.progress_duration)*1000000000/(int(args.n_round_insns)*PER_ITER_ADVANCE))
+else:
+    n_rounds_for_progress_duration = int(int(args.progress_duration)*1000000000)/(int(args.TIMESLICE))
 
 tk_args = {
     "operating_mode" : args.operating_mode,
@@ -254,8 +263,7 @@ print "***** Experiment Setup Start *****"
 exp.setup()
 
 
-#print "waiting 10 seconds for routing algorithms on the controller to converge"
-#time.sleep(10)
+
 
 
 #print "Start Program Switch objects as per topology ..."
@@ -280,8 +288,11 @@ if tk_args["operating_mode"] == "INS_VT" or tk_args["operating_mode"] == "VT" :
     """
 
 
-       
-    n_rounds_for_1sec = int(1000000000/(int(args.n_round_insns)*PER_ITER_ADVANCE))
+    if  tk_args["operating_mode"] == "INS_VT" :  
+        n_rounds_for_1sec = int(1000000000/(int(args.n_round_insns)*PER_ITER_ADVANCE))
+    else :
+        n_rounds_for_1sec = int(1000000000/int(args.TIMESLICE))
+        PER_ITER_ADVANCE = 1
 
     print "Initializing Tk Instances ..."
     exp.initializeTkInstances()
@@ -307,17 +318,23 @@ if tk_args["operating_mode"] == "INS_VT" or tk_args["operating_mode"] == "VT" :
     print "Advancing Tk Instances By %d " %(tk_args["progress_n_rounds"])
     #exp.advanceByNRounds(tk_args["progress_n_rounds"])
     n_iters_run = 0
+    exp_stats["start_time"] = float(time.time())
     while (n_iters_run < tk_args["progress_n_rounds"]) :
+        st_time = float(time.time())
         exp.advanceByNRounds(PER_ITER_ADVANCE)
         exp.fireLinkTimers()
+        end_time = float(time.time())
+        exp_stats["round_completion_times"].append(end_time - st_time)
         if n_iters_run % 100 == 0:
             sys.stdout.write(str(n_iters_run) + " ")
             sys.stdout.flush()
          
         n_iters_run += 1
         sys.stdout.flush()
-
+    exp_stats["end_time"] = float(time.time())
     #raw_input("\n[Continue...]")
+    exp_stats["mu_rct"] = np.mean(exp_stats["round_completion_times"])
+    exp_stats["std_rct"] = np.std(exp_stats["round_completion_times"])
 
     print "Stopping Tk Instances ..."
     #On each worker call StopExperiment
@@ -326,9 +343,16 @@ if tk_args["operating_mode"] == "INS_VT" or tk_args["operating_mode"] == "VT" :
     if tk_args["operating_mode"] == "VT" :
         os.system("sudo killall client_n")
         os.system("sudo killall server_n")
+    
+    with open('/log/exp_stats.json', 'w') as f:
+        json.dump(exp_stats, f, indent=4)
+    print "Dumping overhead stats ... "
+    with open('/log/overhead_stats.json','w') as f:
+        json.dump(exp.exp_stats, f, indent=4)
 
 else :
-
+    #print "Waiting 30 seconds all thrift servers to start"
+    #time.sleep(30)
     print "Start Program Switch objects as per topology ..."
     #raw_input("[Continue...]")
     for sw in my_swlist :
@@ -336,26 +360,33 @@ else :
     print "Finished Programming P4 Switches as per topology ..."
     #raw_input("[Continue...]")
     exp.initializeTkInstances()
+
+    #exp.CLI(locals(),globals())
     
     print "Loading Cmds to Run on Hosts ..."
     install_cmnds_to_run_on_hosts(my_workers, data)
 
-    exp.CLI(locals(),globals())
+    
     
 
-    print "Running for 5 secs ..."
-    time.sleep(5)
+    print "Running for 30 secs ..."
+    time.sleep(10)
     #raw_input("[Continue...]")
 
+print "Copying worker logs ... "
+os.system("sudo mkdir -p /home/moses/exp")
+os.system("sudo mkdir -p /home/moses/exp/" + args.exp_name)
+os.system("sudo rm -rf /home/moses/exp/" + args.exp_name + "/*")
+for worker in my_workers :
+    os.system("sudo mkdir -p /home/moses/exp/" + args.exp_name + "/" + worker.hn())
+    worker.get_file("/log", "/home/moses/exp/" + args.exp_name +"/" + worker.hn())
 print "Tearing Down Worker Mininet Instances ..."
 exp.stop()
 #raw_input("[Continue]")  # wait for user to acknowledge network connectivity
 os.system("rm *.txt")
 os.system("rm *.cfg")
-os.system("sudo mkdir -p /home/moses/exp")
-os.system("sudo mkdir -p /home/moses/exp/" + args.exp_name)
-os.system("sudo rm -rf /home/moses/exp/" + args.exp_name + "/*")
-os.system("sudo mv /log/* /home/moses/exp/" + args.exp_name + "/")
+
+os.system("sudo rm -rf /log/*")
 os.system("sudo chmod -R 777 /home/moses/exp/" + args.exp_name)
 
 

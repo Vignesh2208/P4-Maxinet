@@ -1,47 +1,71 @@
 {
     "switches": {
+        "s9": {
+            "cli_input": "s9-cmnds.txt"
+        }, 
+        "s8": {
+            "cli_input": "s8-cmnds.txt"
+        }, 
+        "s3": {
+            "cli_input": "s3-cmnds.txt"
+        }, 
         "s2": {
             "cli_input": "s2-cmnds.txt"
         }, 
         "s1": {
             "cli_input": "s1-cmnds.txt"
+        }, 
+        "s10": {
+            "cli_input": "s10-cmnds.txt"
+        }, 
+        "s7": {
+            "cli_input": "s7-cmnds.txt"
+        }, 
+        "s6": {
+            "cli_input": "s6-cmnds.txt"
+        }, 
+        "s5": {
+            "cli_input": "s5-cmnds.txt"
+        }, 
+        "s4": {
+            "cli_input": "s4-cmnds.txt"
         }
     }, 
     "host_cmnds": [
         [
             "h1", 
-            "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.6.10"
-        ], 
-        [
-            "h2", 
-            "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.7.10"
+            "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.2.10"
         ], 
         [
             "h3", 
-            "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.8.10"
-        ], 
-        [
-            "h4", 
-            "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.9.10"
+            "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.4.10"
         ], 
         [
             "h5", 
+            "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.6.10"
+        ], 
+        [
+            "h7", 
+            "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.8.10"
+        ], 
+        [
+            "h9", 
             "python /home/moses/P4-MaxiNet/MaxiNet/WorkerServer/iperf_client.py 10.0.10.10"
+        ], 
+        [
+            "h2", 
+            "iperf -s -u -i 0.5 -l 1400B"
+        ], 
+        [
+            "h4", 
+            "iperf -s -u -i 0.5 -l 1400B"
         ], 
         [
             "h6", 
             "iperf -s -u -i 0.5 -l 1400B"
         ], 
         [
-            "h7", 
-            "iperf -s -u -i 0.5 -l 1400B"
-        ], 
-        [
             "h8", 
-            "iperf -s -u -i 0.5 -l 1400B"
-        ], 
-        [
-            "h9", 
             "iperf -s -u -i 0.5 -l 1400B"
         ], 
         [
@@ -69,53 +93,98 @@
             1
         ], 
         [
+            "s2", 
+            "s3", 
+            1
+        ], 
+        [
+            "s3", 
+            "s4", 
+            1
+        ], 
+        [
+            "s4", 
+            "s5", 
+            1
+        ], 
+        [
+            "s5", 
+            "s6", 
+            1
+        ], 
+        [
+            "s6", 
+            "s7", 
+            1
+        ], 
+        [
+            "s7", 
+            "s8", 
+            1
+        ], 
+        [
+            "s8", 
+            "s9", 
+            1
+        ], 
+        [
+            "s9", 
+            "s10", 
+            1
+        ], 
+        [
+            "s10", 
+            "s1", 
+            1
+        ], 
+        [
             "h1", 
             "s1", 
             1
         ], 
         [
-            "h2", 
-            "s1", 
-            1
-        ], 
-        [
             "h3", 
-            "s1", 
-            1
-        ], 
-        [
-            "h4", 
-            "s1", 
+            "s3", 
             1
         ], 
         [
             "h5", 
-            "s1", 
-            1
-        ], 
-        [
-            "h6", 
-            "s2", 
+            "s5", 
             1
         ], 
         [
             "h7", 
-            "s2", 
-            1
-        ], 
-        [
-            "h8", 
-            "s2", 
+            "s7", 
             1
         ], 
         [
             "h9", 
+            "s9", 
+            1
+        ], 
+        [
+            "h2", 
             "s2", 
             1
         ], 
         [
+            "h4", 
+            "s4", 
+            1
+        ], 
+        [
+            "h6", 
+            "s6", 
+            1
+        ], 
+        [
+            "h8", 
+            "s8", 
+            1
+        ], 
+        [
             "h10", 
-            "s2", 
+            "s10", 
             1
         ]
     ]

@@ -20,6 +20,7 @@
 # environment used by the P4 tutorial.
 #
 import os, sys, json, subprocess, re, argparse
+import time
 from time import sleep
 
 from p4_mininet import P4Switch, P4Host # Modified by RB
@@ -334,7 +335,7 @@ class ExerciseRunner:
         if "TIMESLICE" in tk_args:
             self.TIMESLICE = tk_args["TIMESLICE"] 
         else :
-            self.TIMESLICE = 100000
+            self.TIMESLICE = 1000000
 
         if "n_constrained_cpus" in tk_args:
             self.n_constrained_cpus = tk_args["n_constrained_cpus"]
@@ -486,10 +487,12 @@ class ExerciseRunner:
                 continue
             if 'cli_input' not in sw_dict: continue
 
+            
 
             # get the port for this particular switch's thrift server
             sw_obj = self.net.get(sw_name)
             thrift_port = sw_obj.thrift_port
+            assert sw_obj.switch_pid > 0
 
             if sw_obj.switch_pid not in self.switch_pids :
                 self.switch_pids[sw_obj.switch_pid] = sw_obj
@@ -526,6 +529,7 @@ class ExerciseRunner:
                 sw_obj = self.net.get(sw_name)
                 thrift_port = sw_obj.thrift_port
 
+                assert sw_obj.switch_pid > 0
 
                 if sw_obj.switch_pid not in self.switch_pids :
                     self.switch_pids[sw_obj.switch_pid] = sw_obj
@@ -571,7 +575,7 @@ class ExerciseRunner:
             h.cmd('arp -i %s -s %s %s' % (h_iface.name, sw_ip, sw_iface.mac))
             h.cmd('ethtool --offload %s rx off tx off' % h_iface.name)
             h.cmd('ip route add %s dev %s' % (sw_ip, h_iface.name))
-            #h.cmd("sudo tcpdump -i " + h.name + "-eth0 -B 12000 -w /log/" + h.name + ".pcap > /log/tcpdump" + h.name + ".log 2>&1 &")
+            h.cmd("sudo tcpdump -i " + h.name + "-eth0 -B 12000 -w /log/" + h.name + ".pcap > /log/tcpdump" + h.name + ".log 2>&1 &")
             h.setDefaultRoute("via %s" % sw_ip)
 
             if self.operating_mode == "INS_VT" :
@@ -609,7 +613,7 @@ class ExerciseRunner:
 
         for sw_name, sw_dict in self.switches.iteritems():
             sw_obj = self.net.get(sw_name)
-            if sw_obj.switch_pid not in self.switch_pids :
+            if sw_obj.switch_pid > 0 and sw_obj.switch_pid not in self.switch_pids :
                 self.switch_pids[sw_obj.switch_pid] = sw_obj
 
         if self.operating_mode == "INS_VT" :
@@ -703,16 +707,19 @@ class ExerciseRunner:
 
 
     def progress_by_n_rounds(self, n) :
+        start_time = float(time.time())
         if n > 0 and self.operating_mode == "INS_VT" :
             progress_n_rounds(n)
         elif n > 0 and self.operating_mode == "VT" :
             if self.n_rounds_progressed == 0 :
                 o_startExp()
             o_progress_exp_cbe(n)
+        stop_time = float(time.time())
 
         self.n_rounds_progressed = self.n_rounds_progressed + n
         if self.n_rounds_progressed % 1 == 0 :
             print "Total number of rounds progressed: %d " %(self.n_rounds_progressed)
+        return stop_time - start_time
 
     def stop_tk_experiment(self) :
         if self.operating_mode == "INS_VT" :

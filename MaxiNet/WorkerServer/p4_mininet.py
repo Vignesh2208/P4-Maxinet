@@ -21,6 +21,7 @@ from sys import exit
 import os
 import tempfile
 import socket
+import json
 from time import sleep
 
 from netstat import check_listening_on_port
@@ -128,8 +129,20 @@ class P4Switch(Switch):
                 return True
             sleep(0.5)
 
+    def should_switch_start(self) :
+        with open('/tmp/topology.json', 'r') as f:
+            topo = json.load(f)
+        switches = topo["switches"]
+        if self.name in switches.keys() :
+            return True
+        return False
+
     def start(self, controllers):
         "Start up a new P4 switch"
+
+        if not self.should_switch_start() :
+            self.switch_pid = -1
+            return
         info("Starting P4 switch {}.\n".format(self.name))
         args = [self.sw_path]
         for port, intf in self.intfs.items():
@@ -175,10 +188,12 @@ class P4Switch(Switch):
 
     def stop(self):
         "Terminate P4 switch."
-        self.output.flush()
-        self.cmd('kill %' + self.sw_path)
-        if self.operating_mode == "NORMAL" :
-            self.cmd('wait')
+
+        if self.switch_pid != -1 :
+            self.output.flush()
+            self.cmd('kill %' + self.sw_path)
+            if self.operating_mode == "NORMAL" :
+                self.cmd('wait')
         self.deleteIntfs()
 
     def attach(self, intf):
